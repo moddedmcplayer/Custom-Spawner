@@ -307,7 +307,7 @@ namespace CustomSpawner
 			// ---------------------------------------------------------------------------------------\\
 			// Okay we have the list! Time to spawn everyone in, we'll leave SCP for last as it has a bit of logic.
 
-			Timing.CallDelayed(1f, () =>
+			Timing.CallDelayed(1.5f, () =>
 			{
 				foreach (Player ply in PlayersToSpawnAsClassD)
 				{
