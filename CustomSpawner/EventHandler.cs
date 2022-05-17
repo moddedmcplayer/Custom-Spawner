@@ -55,8 +55,6 @@ namespace CustomSpawner
 			{ RoleType.ClassD, new KeyValuePair<Vector3, Quaternion>(ClassDPoint, Quaternion.Euler(0, 340f, 0) ) },
 		};
 
-		private bool RoundStarted = false;
-		
 		public void OnPickingUp(PickingUpItemEventArgs ev)
 		{
 			if (boll.Contains(ev.Pickup))
@@ -84,9 +82,9 @@ namespace CustomSpawner
 
 		public void OnRoundStart()
 		{
-			if(RoundStarted)
+			if(Player.List.Any(x => x.Role.Type != RoleType.Tutorial && x.Role.Type != RoleType.Spectator))
 				return;
-			RoundStarted = true;
+			
 			foreach (var thing in Dummies)
 			{
 				DummiesManager.dummies.Remove(thing);
@@ -539,11 +537,6 @@ namespace CustomSpawner
 				x++;
 				yield return Timing.WaitForSeconds(1f);
 			}
-		}
-
-		public void OnRoundEnd(RoundEndedEventArgs ev)
-		{
-			RoundStarted = false;
 		}
 	}
 }
