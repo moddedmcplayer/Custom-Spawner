@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using Exiled.API.Enums;
 using Exiled.API.Features;
 using UnityEngine;
 using HarmonyLib;

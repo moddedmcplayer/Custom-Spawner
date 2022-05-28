@@ -65,7 +65,7 @@ namespace CustomSpawner
 		{
 			if (!Round.IsStarted && (GameCore.RoundStart.singleton.NetworkTimer > 1 || GameCore.RoundStart.singleton.NetworkTimer == -2))
 			{
-				Timing.CallDelayed(0.5f, () =>
+				Timing.CallDelayed(1f, () =>
 				{
 					ev.Player.IsOverwatchEnabled = false;
 					ev.Player.SetRole(RoleType.Tutorial);
@@ -73,7 +73,7 @@ namespace CustomSpawner
 					Scp173.TurnedPlayers.Add(ev.Player);
 				});
 
-				Timing.CallDelayed(1f, () =>
+				Timing.CallDelayed(1.5f, () =>
 				{
 					ev.Player.Position = SpawnPoint;
 				});
