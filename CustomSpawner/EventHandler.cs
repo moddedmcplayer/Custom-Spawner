@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using AdminToys;
 using Exiled.API.Features.Items;
 using Mirror.LiteNetLib4Mirror;
+using MonoMod.Utils;
 using UnityEngine;
 using Light = Exiled.API.Features.Toys.Light;
 using Object = UnityEngine.Object;
@@ -32,7 +33,7 @@ namespace CustomSpawner
 			SCPPoint = this.plugin.Config.SCPPoint.Key;
 			ScientistPoint = this.plugin.Config.ScientistPoint.Key;
 			dummySpawnPointsAndRotations.Clear();
-			dummySpawnPointsAndRotations.Append<>(new Dictionary<RoleType, KeyValuePair<Vector3, Quaternion>>()
+			dummySpawnPointsAndRotations.AddRange(new Dictionary<RoleType, KeyValuePair<Vector3, Quaternion>>()
 			{
 				{RoleType.ClassD, this.plugin.Config.ClassDPoint},
 				{RoleType.FacilityGuard, this.plugin.Config.GuardPoint},
@@ -64,7 +65,7 @@ namespace CustomSpawner
 
 		private List<GameObject> Dummies = new List<GameObject> { };
 
-		Dictionary<RoleType, KeyValuePair<Vector3, Quaternion>> dummySpawnPointsAndRotations;
+		Dictionary<RoleType, KeyValuePair<Vector3, Quaternion>> dummySpawnPointsAndRotations = new Dictionary<RoleType, KeyValuePair<Vector3, Quaternion>>();
 
 		public void OnPickingUp(PickingUpItemEventArgs ev)
 		{
