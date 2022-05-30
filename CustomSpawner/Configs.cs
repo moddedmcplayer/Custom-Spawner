@@ -1,6 +1,7 @@
 ﻿using Exiled.API.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel;
+using UnityEngine;
 
 namespace CustomSpawner
 {
@@ -46,5 +47,19 @@ namespace CustomSpawner
 		public string SCPTeamDummy { get; set; } = "SCP Team";
 		public string ScientistTeamDummy { get; set; } = "Scientist Team";
 		public string MTFTeamDummy { get; set; } = "MTF Team";
+
+		
+		[Description("Spawn points for player upon joining (pre-round)")]
+		public Vector3 SpawnPoint { get; set; } = new Vector3(240, 978, 96);
+		[Description("Spawn point and rotation of the Class D dummy")]
+		public KeyValuePair<Vector3, Quaternion> ClassDPoint { get; set; } = new (new Vector3(249, 980, 81.5f), Quaternion.Euler(0, 340f, 0));
+		[Description("Spawn point and rotation of the Guard dummy")]
+		public KeyValuePair<Vector3, Quaternion> GuardPoint { get; set; } = new (new Vector3(237, 980, 81.7f), Quaternion.Euler(0f, 12f, 0f));
+		[Description("Spawn point and rotation of the tutorial (random team) dummy")]
+		public KeyValuePair<Vector3, Quaternion> Tutorial { get; set; } = new (new Vector3(228, 980, 87.6f), Quaternion.Euler(0f, 55.8f, 0f));
+		[Description("Spawn point and rotation of the SCP dummy")]
+		public KeyValuePair<Vector3, Quaternion> SCPPoint { get; set; } = new (new Vector3(223, 980, 99), Quaternion.Euler(0, 100.64f, 0f));
+		[Description("Spawn point and rotation of the Scientist dummy")]
+		public KeyValuePair<Vector3, Quaternion> ScientistPoint { get; set; } = new (new Vector3(226, 980, 107), Quaternion.Euler(0,129.25f , 0));
 	}	
 }

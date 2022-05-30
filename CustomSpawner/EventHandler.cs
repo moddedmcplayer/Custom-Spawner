@@ -22,18 +22,36 @@ namespace CustomSpawner
 	public class EventHandler
 	{
 		public CustomSpawner plugin;
-		public EventHandler(CustomSpawner plugin) => this.plugin = plugin;
+		public EventHandler(CustomSpawner plugin)
+		{
+			this.plugin = plugin;
+			SpawnPoint = this.plugin.Config.SpawnPoint;
+			ClassDPoint = this.plugin.Config.ClassDPoint.Key;
+			GuardPoint = this.plugin.Config.GuardPoint.Key;
+			Tutorial = this.plugin.Config.Tutorial.Key;
+			SCPPoint = this.plugin.Config.SCPPoint.Key;
+			ScientistPoint = this.plugin.Config.ScientistPoint.Key;
+			dummySpawnPointsAndRotations.Clear();
+			dummySpawnPointsAndRotations.Append<>(new Dictionary<RoleType, KeyValuePair<Vector3, Quaternion>>()
+			{
+				{RoleType.ClassD, this.plugin.Config.ClassDPoint},
+				{RoleType.FacilityGuard, this.plugin.Config.GuardPoint},
+				{RoleType.Tutorial, this.plugin.Config.Tutorial},
+				{RoleType.Scp173, this.plugin.Config.SCPPoint},
+				{RoleType.Scientist, this.plugin.Config.ScientistPoint}
+			});
+		}
 
 		private readonly Config Config = CustomSpawner.Singleton.Config;
 
-		private static Vector3 SpawnPoint = new Vector3(240, 978, 96); // Spawn point for all players when they get set to tutorial
+		private static Vector3 SpawnPoint; // Spawn point for all players when they get set to tutorial
 
 		// Spawn points for the different teams, making an arch shape
-		public static Vector3 ClassDPoint = new Vector3(249, 980, 81.5f);
-		public static Vector3 GuardPoint = new Vector3(237, 980, 81.7f);
-		public static Vector3 Tutorial = new Vector3(228, 980, 87.6f);
-		public static Vector3 SCPPoint = new Vector3(223, 980, 99);
-		public static Vector3 ScientistPoint = new Vector3(226, 980, 107);
+		public static Vector3 ClassDPoint;
+		public static Vector3 GuardPoint;
+		public static Vector3 Tutorial;
+		public static Vector3 SCPPoint;
+		public static Vector3 ScientistPoint;
 
 		private CoroutineHandle lobbyTimer;
 
@@ -46,14 +64,7 @@ namespace CustomSpawner
 
 		private List<GameObject> Dummies = new List<GameObject> { };
 
-		Dictionary<RoleType, KeyValuePair<Vector3, Quaternion>> dummySpawnPointsAndRotations = new Dictionary<RoleType, KeyValuePair<Vector3, Quaternion>>
-		{
-			{ RoleType.Scientist, new KeyValuePair<Vector3, Quaternion>(ScientistPoint, Quaternion.Euler(0,129.25f , 0) ) },
-			{ RoleType.Scp173, new KeyValuePair<Vector3, Quaternion>(SCPPoint, Quaternion.Euler(0, 100.64f, 0f) ) },
-			{ RoleType.Tutorial, new KeyValuePair<Vector3, Quaternion>(Tutorial, Quaternion.Euler(0f, 55.8f, 0f)) },
-			{ RoleType.FacilityGuard, new KeyValuePair<Vector3, Quaternion>(GuardPoint, Quaternion.Euler(0f, 12f, 0f) ) },
-			{ RoleType.ClassD, new KeyValuePair<Vector3, Quaternion>(ClassDPoint, Quaternion.Euler(0, 340f, 0) ) },
-		};
+		Dictionary<RoleType, KeyValuePair<Vector3, Quaternion>> dummySpawnPointsAndRotations;
 
 		public void OnPickingUp(PickingUpItemEventArgs ev)
 		{
