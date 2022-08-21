@@ -27,13 +27,13 @@ namespace CustomSpawner
 		{
 			this.plugin = plugin;
 			SpawnPoint = this.plugin.Config.SpawnPoint;
-			ClassDPoint = this.plugin.Config.ClassDPoint.Key;
-			GuardPoint = this.plugin.Config.GuardPoint.Key;
-			Tutorial = this.plugin.Config.Tutorial.Key;
-			SCPPoint = this.plugin.Config.SCPPoint.Key;
-			ScientistPoint = this.plugin.Config.ScientistPoint.Key;
+			ClassDPoint = this.plugin.Config.ClassDPoint.Item1;
+			GuardPoint = this.plugin.Config.GuardPoint.Item1;
+			Tutorial = this.plugin.Config.Tutorial.Item1;
+			SCPPoint = this.plugin.Config.SCPPoint.Item1;
+			ScientistPoint = this.plugin.Config.ScientistPoint.Item1;
 			dummySpawnPointsAndRotations.Clear();
-			dummySpawnPointsAndRotations.AddRange(new Dictionary<RoleType, KeyValuePair<Vector3, Quaternion>>()
+			dummySpawnPointsAndRotations.AddRange(new Dictionary<RoleType, (Vector3, Quaternion)>()
 			{
 				{RoleType.ClassD, this.plugin.Config.ClassDPoint},
 				{RoleType.FacilityGuard, this.plugin.Config.GuardPoint},

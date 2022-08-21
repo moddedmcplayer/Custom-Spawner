@@ -52,14 +52,68 @@ namespace CustomSpawner
 		[Description("Spawn points for player upon joining (pre-round)")]
 		public Vector3 SpawnPoint { get; set; } = new Vector3(240, 978, 96);
 		[Description("Spawn point and rotation of the Class D dummy")]
-		public KeyValuePair<Vector3, Quaternion> ClassDPoint { get; set; } = new (new Vector3(249, 980, 81.5f), Quaternion.Euler(0, 340f, 0));
+		public (Vector3, Quaternion) ClassDPoint { get; set; } = (new Vector3()
+		{
+			x = 249,
+			y = 980,
+			z = 81.5f
+		}, new Quaternion()
+		{
+			w = 0, 
+			x= 340f,
+			z = 0
+		});
 		[Description("Spawn point and rotation of the Guard dummy")]
-		public KeyValuePair<Vector3, Quaternion> GuardPoint { get; set; } = new (new Vector3(237, 980, 81.7f), Quaternion.Euler(0f, 12f, 0f));
+		public (Vector3, Quaternion) GuardPoint { get; set; } = 
+		(new Vector3()
+		{
+			x = 237,
+			y = 980,
+			z = 81.7f
+		}, new Quaternion()
+		{
+			w = 0, 
+			x= 12f,
+			z = 0
+		});
 		[Description("Spawn point and rotation of the tutorial (random team) dummy")]
-		public KeyValuePair<Vector3, Quaternion> Tutorial { get; set; } = new (new Vector3(228, 980, 87.6f), Quaternion.Euler(0f, 55.8f, 0f));
+		public (Vector3, Quaternion) Tutorial { get; set; } =
+		(new Vector3()
+		{
+			x = 228,
+			y = 980,
+			z = 87.6f
+		}, new Quaternion()
+		{
+			w = 0, 
+			x= 55.8f,
+			z = 0
+		});
 		[Description("Spawn point and rotation of the SCP dummy")]
-		public KeyValuePair<Vector3, Quaternion> SCPPoint { get; set; } = new (new Vector3(223, 980, 99), Quaternion.Euler(0, 100.64f, 0f));
+		public (Vector3, Quaternion) SCPPoint { get; set; } =
+		(new Vector3()
+		{
+			x = 223f,
+			y = 980f,
+			z = 99f
+		}, new Quaternion()
+		{
+			w = 0, 
+			x= 100.64f,
+			z = 0
+		});
 		[Description("Spawn point and rotation of the Scientist dummy")]
-		public KeyValuePair<Vector3, Quaternion> ScientistPoint { get; set; } = new (new Vector3(226, 980, 107), Quaternion.Euler(0,129.25f , 0));
+		public (Vector3, Quaternion) ScientistPoint { get; set; } =
+		(new Vector3()
+		{
+			x = 226,
+			y = 980,
+			z = 107
+		}, new Quaternion()
+		{
+			w = 0, 
+			x = 129.25f,
+			z = 0
+		});
 	}	
 }
