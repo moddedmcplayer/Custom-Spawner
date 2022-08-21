@@ -65,7 +65,7 @@ namespace CustomSpawner
 
 		private List<GameObject> Dummies = new List<GameObject> { };
 
-		Dictionary<RoleType, KeyValuePair<Vector3, Quaternion>> dummySpawnPointsAndRotations = new Dictionary<RoleType, KeyValuePair<Vector3, Quaternion>>();
+		Dictionary<RoleType, (Vector3, Quaternion)> dummySpawnPointsAndRotations = new Dictionary<RoleType, (Vector3, Quaternion)>();
 
 		public void OnPickingUp(PickingUpItemEventArgs ev)
 		{
@@ -427,18 +427,18 @@ namespace CustomSpawner
 				obj.GetComponent<QueryProcessor>().NetworkPlayerId = 9999;
 				obj.transform.localScale = new Vector3(2.3f, 2.3f, 2.3f);
 
-				obj.transform.position = dummySpawnPointsAndRotations[Role.Key].Key;
-				obj.transform.rotation = dummySpawnPointsAndRotations[Role.Key].Value;
+				obj.transform.position = dummySpawnPointsAndRotations[Role.Key].Item1;
+				obj.transform.rotation = dummySpawnPointsAndRotations[Role.Key].Item2;
 
 				NetworkServer.Spawn(obj);
 				Dummies.Add(obj);
 				DummiesManager.dummies.Add(obj, obj.GetComponent<ReferenceHub>());
 				
-				var pickup = Item.Create(ItemType.SCP018).Spawn(dummySpawnPointsAndRotations[Role.Key].Key);
+				var pickup = Item.Create(ItemType.SCP018).Spawn(dummySpawnPointsAndRotations[Role.Key].Item1);
 				GameObject gameObject = pickup.Base.gameObject;
 				gameObject.transform.localScale = new Vector3(30f, 0.1f, 30f);
 
-				var light = Light.Create(dummySpawnPointsAndRotations[Role.Key].Key, dummySpawnPointsAndRotations[Role.Key].Value.eulerAngles);
+				var light = Light.Create(dummySpawnPointsAndRotations[Role.Key].Item1, dummySpawnPointsAndRotations[Role.Key].Item2.eulerAngles);
 				light.Intensity = 4f;
 				light.Range = 10f;
 				switch (Role.Key.GetTeam())
@@ -476,7 +476,7 @@ namespace CustomSpawner
 					rigidBody.useGravity = false;
 					rigidBody.detectCollisions = false;
 				}
-				pickup.Base.transform.localPosition = dummySpawnPointsAndRotations[Role.Key].Key + Vector3.down * 3.3f;
+				pickup.Base.transform.localPosition = dummySpawnPointsAndRotations[Role.Key].Item1 + Vector3.down * 3.3f;
 			}
 		}
 
