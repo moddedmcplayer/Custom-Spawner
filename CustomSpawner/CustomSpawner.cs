@@ -22,7 +22,7 @@ namespace CustomSpawner
 		public override void OnEnabled()
 		{
 			Singleton = this;
-			Handler = new EventHandler(this);
+			Handler = new EventHandler();
 			harmony = new Harmony($"CustomSpawner, {DateTime.UtcNow.Ticks}");
 			harmony.PatchAll();
 

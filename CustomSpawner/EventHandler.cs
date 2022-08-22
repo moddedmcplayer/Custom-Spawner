@@ -22,24 +22,22 @@ namespace CustomSpawner
 {
 	public class EventHandler
 	{
-		public CustomSpawner plugin;
-		public EventHandler(CustomSpawner plugin)
+		public EventHandler()
 		{
-			this.plugin = plugin;
-			SpawnPoint = this.plugin.Config.SpawnPoint;
-			ClassDPoint = this.plugin.Config.ClassDPoint.Item1;
-			GuardPoint = this.plugin.Config.GuardPoint.Item1;
-			Tutorial = this.plugin.Config.Tutorial.Item1;
-			SCPPoint = this.plugin.Config.SCPPoint.Item1;
-			ScientistPoint = this.plugin.Config.ScientistPoint.Item1;
+			SpawnPoint = Config.SpawnPoint;
+			ClassDPoint = Config.ClassDPoint;
+			GuardPoint = Config.GuardPoint;
+			Tutorial = Config.Tutorial;
+			SCPPoint = Config.SCPPoint;
+			ScientistPoint = Config.ScientistPoint;
 			dummySpawnPointsAndRotations.Clear();
 			dummySpawnPointsAndRotations.AddRange(new Dictionary<RoleType, (Vector3, Quaternion)>()
 			{
-				{RoleType.ClassD, this.plugin.Config.ClassDPoint},
-				{RoleType.FacilityGuard, this.plugin.Config.GuardPoint},
-				{RoleType.Tutorial, this.plugin.Config.Tutorial},
-				{RoleType.Scp173, this.plugin.Config.SCPPoint},
-				{RoleType.Scientist, this.plugin.Config.ScientistPoint}
+				{RoleType.ClassD, (Config.ClassDPoint, Config.ClassDRotation)},
+				{RoleType.FacilityGuard, (Config.GuardPoint, Config.GuardRotation)},
+				{RoleType.Tutorial, (Config.Tutorial, Config.TutorialRotation)},
+				{RoleType.Scp173, (Config.SCPPoint, Config.SCPRotation)},
+				{RoleType.Scientist, (Config.ScientistPoint, Config.ScientistRotation)}
 			});
 		}
 

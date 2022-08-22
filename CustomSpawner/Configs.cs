@@ -51,69 +51,75 @@ namespace CustomSpawner
 		
 		[Description("Spawn points for player upon joining (pre-round)")]
 		public Vector3 SpawnPoint { get; set; } = new Vector3(240, 978, 96);
+
 		[Description("Spawn point and rotation of the Class D dummy")]
-		public (Vector3, Quaternion) ClassDPoint { get; set; } = (new Vector3()
+		public Vector3 ClassDPoint { get; set; } = new Vector3()
 		{
 			x = 249,
 			y = 980,
 			z = 81.5f
-		}, new Quaternion()
+		};
+		public Quaternion ClassDRotation { get; set; } = new Quaternion()
 		{
 			w = 0, 
 			x= 340f,
 			z = 0
-		});
-		[Description("Spawn point and rotation of the Guard dummy")]
-		public (Vector3, Quaternion) GuardPoint { get; set; } = 
-		(new Vector3()
+		};
+		
+		[Description("Spawn point of the Guard dummy")]
+		public Vector3 GuardPoint { get; set; } = new Vector3()
 		{
 			x = 237,
 			y = 980,
 			z = 81.7f
-		}, new Quaternion()
+		};
+		public Quaternion GuardRotation { get; set; } = new Quaternion()
 		{
 			w = 0, 
 			x= 12f,
 			z = 0
-		});
-		[Description("Spawn point and rotation of the tutorial (random team) dummy")]
-		public (Vector3, Quaternion) Tutorial { get; set; } =
-		(new Vector3()
+		};
+
+		[Description("Spawn point of the tutorial (random team) dummy")]
+		public Vector3 Tutorial { get; set; } = new Vector3()
 		{
 			x = 228,
 			y = 980,
 			z = 87.6f
-		}, new Quaternion()
+		};
+		public Quaternion TutorialRotation { get; set; } = new Quaternion()
 		{
 			w = 0, 
 			x= 55.8f,
 			z = 0
-		});
+		};
+
 		[Description("Spawn point and rotation of the SCP dummy")]
-		public (Vector3, Quaternion) SCPPoint { get; set; } =
-		(new Vector3()
+		public Vector3 SCPPoint { get; set; } = new Vector3()
 		{
 			x = 223f,
 			y = 980f,
 			z = 99f
-		}, new Quaternion()
+		};
+		public Quaternion SCPRotation { get; set; } = new Quaternion()
 		{
 			w = 0, 
 			x= 100.64f,
 			z = 0
-		});
+		};
+
 		[Description("Spawn point and rotation of the Scientist dummy")]
-		public (Vector3, Quaternion) ScientistPoint { get; set; } =
-		(new Vector3()
+		public Vector3 ScientistPoint { get; set; } = new Vector3()
 		{
 			x = 226,
 			y = 980,
 			z = 107
-		}, new Quaternion()
+		};
+		public Quaternion ScientistRotation { get; set; } = new Quaternion()
 		{
 			w = 0, 
 			x = 129.25f,
 			z = 0
-		});
+		};
 	}	
 }
