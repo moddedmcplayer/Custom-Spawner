@@ -20,7 +20,7 @@ namespace CustomSpawner
 		public string BottomText { get; set; } = "Go stand next to the team you want to play as!";
 
 		[Description("Your discord group invite")]
-		public string DiscordInvite { get; set; } = "discord.gg/kognity";
+		public string DiscordInvite { get; set; } = "discord.gg/yourinvite";
 
 		[Description("If you want a Broadcast to show the class that the player will vote as when they're standing on the circle")]
 		public bool VotingBroadcast { get; set; } = true;
