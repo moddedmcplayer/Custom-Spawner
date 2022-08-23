@@ -33,11 +33,11 @@ namespace CustomSpawner
 			dummySpawnPointsAndRotations.Clear();
 			dummySpawnPointsAndRotations.AddRange(new Dictionary<RoleType, (Vector3, Quaternion)>()
 			{
-				{RoleType.ClassD, (Config.ClassDPoint, Config.ClassDRotation)},
-				{RoleType.FacilityGuard, (Config.GuardPoint, Config.GuardRotation)},
-				{RoleType.Tutorial, (Config.Tutorial, Config.TutorialRotation)},
-				{RoleType.Scp173, (Config.SCPPoint, Config.SCPRotation)},
-				{RoleType.Scientist, (Config.ScientistPoint, Config.ScientistRotation)}
+				{RoleType.ClassD, (Config.ClassDPoint, Quaternion.Euler(Config.ClassDRotation))},
+				{RoleType.FacilityGuard, (Config.GuardPoint, Quaternion.Euler(Config.GuardRotation))},
+				{RoleType.Tutorial, (Config.Tutorial, Quaternion.Euler(Config.TutorialRotation))},
+				{RoleType.Scp173, (Config.SCPPoint, Quaternion.Euler(Config.SCPRotation))},
+				{RoleType.Scientist, (Config.ScientistPoint, Quaternion.Euler(Config.ScientistRotation))}
 			});
 		}
 

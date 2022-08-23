@@ -59,10 +59,10 @@ namespace CustomSpawner
 			y = 980,
 			z = 81.5f
 		};
-		public Quaternion ClassDRotation { get; set; } = new Quaternion()
+		public Vector3 ClassDRotation { get; set; } = new Vector3()
 		{
-			w = 0, 
-			x= 340f,
+			x = 340f,
+			y = 0,
 			z = 0
 		};
 		
@@ -73,10 +73,10 @@ namespace CustomSpawner
 			y = 980,
 			z = 81.7f
 		};
-		public Quaternion GuardRotation { get; set; } = new Quaternion()
+		public Vector3 GuardRotation { get; set; } = new Vector3()
 		{
-			w = 0, 
 			x= 12f,
+			y = 0,
 			z = 0
 		};
 
@@ -87,10 +87,10 @@ namespace CustomSpawner
 			y = 980,
 			z = 87.6f
 		};
-		public Quaternion TutorialRotation { get; set; } = new Quaternion()
+		public Vector3 TutorialRotation { get; set; } = new Vector3()
 		{
-			w = 0, 
 			x= 55.8f,
+			y = 0,
 			z = 0
 		};
 
@@ -101,10 +101,10 @@ namespace CustomSpawner
 			y = 980f,
 			z = 99f
 		};
-		public Quaternion SCPRotation { get; set; } = new Quaternion()
+		public Vector3 SCPRotation { get; set; } = new Vector3()
 		{
-			w = 0, 
 			x= 100.64f,
+			y = 0,
 			z = 0
 		};
 
@@ -115,10 +115,10 @@ namespace CustomSpawner
 			y = 980,
 			z = 107
 		};
-		public Quaternion ScientistRotation { get; set; } = new Quaternion()
+		public Vector3 ScientistRotation { get; set; } = new Vector3()
 		{
-			w = 0, 
 			x = 129.25f,
+			y = 0,
 			z = 0
 		};
 	}	
