@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using AdminToys;
-using Exiled.API.Features.Items;
 using Mirror.LiteNetLib4Mirror;
 using MonoMod.Utils;
 using UnityEngine;
@@ -20,6 +19,14 @@ using Random = UnityEngine.Random;
 
 namespace CustomSpawner
 {
+	using Exiled.API.Features.Pickups;
+	using Exiled.API.Features.Roles;
+	using Exiled.Events.EventArgs.Player;
+	using Exiled.Events.Handlers;
+	using PlayerRoles;
+	using Item = Exiled.API.Features.Items.Item;
+	using Player = Exiled.API.Features.Player;
+
 	public class EventHandler
 	{
 		public EventHandler()
@@ -31,13 +38,13 @@ namespace CustomSpawner
 			SCPPoint = Config.SCPPoint;
 			ScientistPoint = Config.ScientistPoint;
 			dummySpawnPointsAndRotations.Clear();
-			dummySpawnPointsAndRotations.AddRange(new Dictionary<RoleType, (Vector3, Quaternion)>()
+			dummySpawnPointsAndRotations.AddRange(new Dictionary<RoleTypeId, (Vector3, Quaternion)>()
 			{
-				{RoleType.ClassD, (Config.ClassDPoint, Quaternion.Euler(Config.ClassDRotation))},
-				{RoleType.FacilityGuard, (Config.GuardPoint, Quaternion.Euler(Config.GuardRotation))},
-				{RoleType.Tutorial, (Config.Tutorial, Quaternion.Euler(Config.TutorialRotation))},
-				{RoleType.Scp173, (Config.SCPPoint, Quaternion.Euler(Config.SCPRotation))},
-				{RoleType.Scientist, (Config.ScientistPoint, Quaternion.Euler(Config.ScientistRotation))}
+				{RoleTypeId.ClassD, (Config.ClassDPoint, Quaternion.Euler(Config.ClassDRotation))},
+				{RoleTypeId.FacilityGuard, (Config.GuardPoint, Quaternion.Euler(Config.GuardRotation))},
+				{RoleTypeId.Tutorial, (Config.Tutorial, Quaternion.Euler(Config.TutorialRotation))},
+				{RoleTypeId.Scp173, (Config.SCPPoint, Quaternion.Euler(Config.SCPRotation))},
+				{RoleTypeId.Scientist, (Config.ScientistPoint, Quaternion.Euler(Config.ScientistRotation))}
 			});
 		}
 
@@ -63,7 +70,7 @@ namespace CustomSpawner
 
 		private List<GameObject> Dummies = new List<GameObject> { };
 
-		Dictionary<RoleType, (Vector3, Quaternion)> dummySpawnPointsAndRotations = new Dictionary<RoleType, (Vector3, Quaternion)>();
+		Dictionary<RoleTypeId, (Vector3, Quaternion)> dummySpawnPointsAndRotations = new Dictionary<RoleTypeId, (Vector3, Quaternion)>();
 
 		public void OnPickingUp(PickingUpItemEventArgs ev)
 		{
@@ -78,9 +85,9 @@ namespace CustomSpawner
 				Timing.CallDelayed(1f, () =>
 				{
 					ev.Player.IsOverwatchEnabled = false;
-					ev.Player.SetRole(RoleType.Tutorial);
-					Scp096.TurnedPlayers.Add(ev.Player);
-					Scp173.TurnedPlayers.Add(ev.Player);
+					ev.Player.RoleManager.ServerSetRole(RoleTypeId.Tutorial, RoleChangeReason.None);
+					Scp096Role.TurnedPlayers.Add(ev.Player);
+					Scp173Role.TurnedPlayers.Add(ev.Player);
 				});
 
 				Timing.CallDelayed(1.5f, () =>
@@ -92,7 +99,7 @@ namespace CustomSpawner
 
 		public void OnRoundStart()
 		{
-			if(Player.List.Any(x => x.Role.Type != RoleType.Tutorial && x.Role.Type != RoleType.Spectator))
+			if(Player.List.Any(x => x.Role.Type != RoleTypeId.Tutorial && x.Role.Type != RoleTypeId.Spectator))
 				return;
 			
 			foreach (var thing in Dummies)
@@ -105,8 +112,8 @@ namespace CustomSpawner
 				Timing.KillCoroutines(lobbyTimer);
 			}
 
-			Log.Debug($"Player List count: {Player.List.Count()}", Config.ShowDebug);
-			Log.Debug($"Config::Spawnquene count: {Config.SpawnQueue.Count()}", Config.ShowDebug);
+			Log.Debug($"Player List count: {Player.List.Count()}");
+			Log.Debug($"Config::Spawnquene count: {Config.SpawnQueue.Count()}");
 			for (int x = 0; x < Player.List.ToList().Count; x++)
 			{
 				if (x >= Config.SpawnQueue.Count())
@@ -131,7 +138,7 @@ namespace CustomSpawner
 				}
 			}
 
-			Log.Debug($"Calculated people to spawn! SCPS: {SCPsToSpawn}, CDs: {ClassDsToSpawn}, Guard: {GuardsToSpawn}, Science: {ScientistsToSpawn}", Config.ShowDebug);
+			Log.Debug($"Calculated people to spawn! SCPS: {SCPsToSpawn}, CDs: {ClassDsToSpawn}, Guard: {GuardsToSpawn}, Science: {ScientistsToSpawn}");
 			List<Player> BulkList = Player.List.ToList();
 			List<Player> SCPPlayers = new List<Player> { };
 			List<Player> ScientistPlayers = new List<Player> { };
@@ -148,22 +155,22 @@ namespace CustomSpawner
 				if (Vector3.Distance(player.Position, SCPPoint) <= 3)
 				{
 					SCPPlayers.Add(player);
-					Log.Debug($"Added {player.Nickname} to scp spawnlist!", Config.ShowDebug);
+					Log.Debug($"Added {player.Nickname} to scp spawnlist!");
 				}
 				else if (Vector3.Distance(player.Position, ClassDPoint) <= 3)
 				{
 					ClassDPlayers.Add(player);
-					Log.Debug($"Added {player.Nickname} to cd spawnlist!", Config.ShowDebug);
+					Log.Debug($"Added {player.Nickname} to cd spawnlist!");
 				}
 				else if (Vector3.Distance(player.Position, ScientistPoint) <= 3)
 				{
 					ScientistPlayers.Add(player);
-					Log.Debug($"Added {player.Nickname} to sc spawnlist!", Config.ShowDebug);
+					Log.Debug($"Added {player.Nickname} to sc spawnlist!");
 				}
 				else if (Vector3.Distance(player.Position, GuardPoint) <= 3)
 				{
 					GuardPlayers.Add(player);
-					Log.Debug($"Added {player.Nickname} to guard spawnlist!", Config.ShowDebug);
+					Log.Debug($"Added {player.Nickname} to guard spawnlist!");
 				}
 			}
 			// ---------------------------------------------------------------------------------------\\
@@ -266,10 +273,10 @@ namespace CustomSpawner
 					SCPsToSpawn = 0;
 				}
 			}
-			Log.Debug($"Filling blanks: Players (SCP/CD/SC/MTF): {SCPPlayers.Count()}, {ClassDPlayers.Count()}, {ScientistPlayers.Count()}, {GuardPlayers.Count()}", Config.ShowDebug);
+			Log.Debug($"Filling blanks: Players (SCP/CD/SC/MTF): {SCPPlayers.Count()}, {ClassDPlayers.Count()}, {ScientistPlayers.Count()}, {GuardPlayers.Count()}");
 			foreach (var playerPly in SCPPlayers)
 			{
-				Log.Debug($"{playerPly.Nickname}, {playerPly.UserId}", Config.ShowDebug);
+				Log.Debug($"{playerPly.Nickname}, {playerPly.UserId}");
 			}
 			// ---------------------------------------------------------------------------------------\\
 			// ---------------------------------------------------------------------------------------\\
@@ -313,7 +320,7 @@ namespace CustomSpawner
 					BulkList.Remove(Ply); // Removing the winners from the bulk list
 				}
 			}
-			Log.Debug($"Filled blanks: Players (SCP/CD/SC/MTF): {SCPPlayers.Count()}, {ClassDPlayers.Count()}, {ScientistPlayers.Count()}, {GuardPlayers.Count()}", Config.ShowDebug);
+			Log.Debug($"Filled blanks: Players (SCP/CD/SC/MTF): {SCPPlayers.Count()}, {ClassDPlayers.Count()}, {ScientistPlayers.Count()}, {GuardPlayers.Count()}");
 			// ---------------------------------------------------------------------------------------\\
 			// Okay we have the list! Time to spawn everyone in, we'll leave SCP for last as it has a bit of logic.
 
@@ -321,52 +328,51 @@ namespace CustomSpawner
 			{
 				foreach (Player ply in PlayersToSpawnAsClassD)
 				{
-					Log.Debug($"spawning {ply.Nickname} as CD", Config.ShowDebug);
-					ply.SetRole(RoleType.ClassD);
-					Log.Debug("spawned", Config.ShowDebug);
+					Log.Debug($"spawning {ply.Nickname} as CD");
+					ply.RoleManager.ServerSetRole(RoleTypeId.ClassD, RoleChangeReason.RoundStart);
+					Log.Debug("spawned");
 				}
 
 				foreach (Player ply in PlayersToSpawnAsScientist)
 				{
-					Log.Debug($"spawning {ply.Nickname} as SC", Config.ShowDebug);
-					ply.SetRole(RoleType.Scientist);
-					Log.Debug("spawned", Config.ShowDebug);
+					Log.Debug($"spawning {ply.Nickname} as SC");
+					ply.RoleManager.ServerSetRole(RoleTypeId.Scientist, RoleChangeReason.RoundStart);
+					Log.Debug("spawned");
 				}
 
 				foreach (Player ply in PlayersToSpawnAsGuard)
 				{
 					Log.Debug($"spawning {ply.Nickname} as Guard");
-					ply.SetRole(RoleType.FacilityGuard);
-					Log.Debug("spawned", Config.ShowDebug);
+					ply.RoleManager.ServerSetRole(RoleTypeId.FacilityGuard, RoleChangeReason.RoundStart);
+					Log.Debug("spawned");
 				}
 
 				// ---------------------------------------------------------------------------------------\\
 
 				// SCP Logic, preventing SCP-079 from spawning if there isn't at least 2 other SCPs
-				List<RoleType> Roles = new List<RoleType>
+				List<RoleTypeId> Roles = new List<RoleTypeId>
 				{
-					RoleType.Scp049, RoleType.Scp096, RoleType.Scp106, RoleType.Scp173, RoleType.Scp93953,
-					RoleType.Scp93989
+					RoleTypeId.Scp049, RoleTypeId.Scp096, RoleTypeId.Scp106, RoleTypeId.Scp173, RoleTypeId.Scp939,
 				};
 
 				if (PlayersToSpawnAsSCP.Count > 2)
-					Roles.Add(RoleType.Scp079);
+					Roles.Add(RoleTypeId.Scp079);
 
 				foreach (Player ply in PlayersToSpawnAsSCP)
 				{
-					RoleType role = Roles[Random.Range(0, Roles.Count)];
+					RoleTypeId role = Roles[Random.Range(0, Roles.Count)];
 					Roles.Remove(role);
 
-					Log.Debug($"spawning {ply.Nickname} as scp {role.ToString()}", Config.ShowDebug);
-					ply.SetRole(role);
-					Log.Debug("spawned", Config.ShowDebug);
+					Log.Debug($"spawning {ply.Nickname} as scp {role.ToString()}");
+					ply.RoleManager.ServerSetRole(role, RoleChangeReason.RoundStart);
+					Log.Debug("spawned");
 				}
 
 				Timing.CallDelayed(1f, () =>
 				{
 					Round.IsLocked = false;
-					Scp096.TurnedPlayers.Clear();
-					Scp173.TurnedPlayers.Clear();
+					Scp096Role.TurnedPlayers.Clear();
+					Scp173Role.TurnedPlayers.Clear();
 				});
 
 				// I will come back to this later
@@ -392,13 +398,13 @@ namespace CustomSpawner
 			GuardsToSpawn = 0;
 
 
-			Dictionary<RoleType, string> dummiesToSpawn = new Dictionary<RoleType, string>
+			Dictionary<RoleTypeId, string> dummiesToSpawn = new Dictionary<RoleTypeId, string>
 			{
-				{ RoleType.Tutorial, Config.RandomTeamDummy },
-				{ RoleType.ClassD, Config.ClassDTeamDummy },
-				{ RoleType.Scp173, Config.SCPTeamDummy },
-				{ RoleType.Scientist, Config.ScientistTeamDummy },
-				{ RoleType.FacilityGuard, Config.MTFTeamDummy },
+				{ RoleTypeId.Tutorial, Config.RandomTeamDummy },
+				{ RoleTypeId.ClassD, Config.ClassDTeamDummy },
+				{ RoleTypeId.Scp173, Config.SCPTeamDummy },
+				{ RoleTypeId.Scientist, Config.ScientistTeamDummy },
+				{ RoleTypeId.FacilityGuard, Config.MTFTeamDummy },
 			};
 
 
@@ -417,12 +423,12 @@ namespace CustomSpawner
 				CharacterClassManager ccm = obj.GetComponent<CharacterClassManager>();
 				if (ccm == null)
 					Log.Error("CCM is null, this can cause problems!");
-				ccm.CurClass = Role.Key;
+				ccm.Hub.roleManager.CurrentRole = ccm.Hub.roleManager.GetRoleBase(Role.Key);
 				ccm.GodMode = true;
 				//ccm.OldRefreshPlyModel(PlayerManager.localPlayer);
 				obj.GetComponent<NicknameSync>().Network_myNickSync = Role.Value;
-				obj.GetComponent<QueryProcessor>().PlayerId = 9999;
-				obj.GetComponent<QueryProcessor>().NetworkPlayerId = 9999;
+				ccm.Hub._playerId = new RecyclablePlayerId(9999);
+				ccm.Hub.Network_playerId = new RecyclablePlayerId(9999);
 				obj.transform.localScale = new Vector3(2.3f, 2.3f, 2.3f);
 
 				obj.transform.position = dummySpawnPointsAndRotations[Role.Key].Item1;
@@ -432,11 +438,11 @@ namespace CustomSpawner
 				Dummies.Add(obj);
 				DummiesManager.dummies.Add(obj, obj.GetComponent<ReferenceHub>());
 				
-				var pickup = Item.Create(ItemType.SCP018).Spawn(dummySpawnPointsAndRotations[Role.Key].Item1);
+				var pickup = Item.Create(ItemType.SCP018).CreatePickup(dummySpawnPointsAndRotations[Role.Key].Item1);
 				GameObject gameObject = pickup.Base.gameObject;
 				gameObject.transform.localScale = new Vector3(30f, 0.1f, 30f);
 
-				var light = Light.Create(dummySpawnPointsAndRotations[Role.Key].Item1, dummySpawnPointsAndRotations[Role.Key].Item2.eulerAngles);
+				/*var light = Light.Create(dummySpawnPointsAndRotations[Role.Key].Item1, dummySpawnPointsAndRotations[Role.Key].Item2.eulerAngles);
 				light.Intensity = 4f;
 				light.Range = 10f;
 				switch (Role.Key.GetTeam())
@@ -456,7 +462,7 @@ namespace CustomSpawner
 					default:
 						light.Color = Color.blue;
 						break;
-				}
+				}*/
 				NetworkServer.UnSpawn(gameObject);
 				NetworkServer.Spawn(pickup.Base.gameObject);
 				Dummies.Add(pickup.Base.gameObject);
@@ -518,7 +524,7 @@ namespace CustomSpawner
 
 				foreach (Player ply in Player.List)
 				{
-					ply.ShowHint(message.ToString(), 1f);
+					//ply.ShowHint(message.ToString(), 1f);
 
 					if (!Config.VotingBroadcast)
 						continue;

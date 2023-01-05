@@ -11,7 +11,7 @@ namespace CustomSpawner
 		public bool IsEnabled { get; set; } = true;
 
 		[Description("Show debug messages?")]
-		public bool ShowDebug { get; set; } = false;
+		public bool Debug { get; set; } = false;
 		
 		[Description("Upper text shown to the user")]
 		public string UpperText { get; set; } = "Welcome to the Server!";

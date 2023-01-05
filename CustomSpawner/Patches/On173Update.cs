@@ -3,33 +3,42 @@ using System.Reflection.Emit;
 using HarmonyLib;
 using static HarmonyLib.AccessTools;
 using NorthwoodLib.Pools;
-using PlayableScps;
 
 namespace CustomSpawner.Patches
 {
-    [HarmonyPatch(typeof(Scp173), nameof(Scp173.OnUpdate))]
+    using Mirror;
+    using PlayerRoles.PlayableScps.Scp173;
+
+    [HarmonyPatch(typeof(Scp173ObserversTracker), nameof(Scp173ObserversTracker.UpdateObservers))]
     internal static class Scp173Update
     {
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+        public static bool Prefix(Scp173ObserversTracker __instance)
         {
-            List<CodeInstruction> newInstructions = ListPool<CodeInstruction>.Shared.Rent(instructions);
-
-            Label returnLabel = generator.DefineLabel();
-
-            newInstructions.InsertRange(0, new[]
+            if (!NetworkServer.active)
             {
-                new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Ldfld, Field(typeof(Scp173), nameof(Scp173.Hub))),
-                new CodeInstruction(OpCodes.Call, Method(typeof(DummiesManager), nameof(DummiesManager.IsDummy), new[] { typeof(ReferenceHub) })),
-                new CodeInstruction(OpCodes.Brtrue_S, returnLabel),
-            });
+                return false;
+            }
+            int num = __instance.CurrentObservers;
+            int num2 = (__instance.SimulatedStare > 0f) ? 1 : 0;
+            if (__instance._simulatedTargets != num2)
+            {
+                num += num2 - __instance._simulatedTargets;
+                __instance._simulatedTargets = num2;
+            }
+            foreach (ReferenceHub targetHub in ReferenceHub.AllHubs)
+            {
+                if(DummiesManager.IsDummy(targetHub))
+                    continue;
+                num += __instance.UpdateObserver(targetHub);
+            }
+            __instance.CurrentObservers = num;
+            if (__instance.Owner.isLocalPlayer)
+            {
+                return false;
+            }
+            __instance.ServerSendRpc(true);
 
-            newInstructions[newInstructions.Count - 1].labels.Add(returnLabel);
-
-            for (int z = 0; z < newInstructions.Count; z++)
-                yield return newInstructions[z];
-
-            ListPool<CodeInstruction>.Shared.Return(newInstructions);
+            return false;
         }
     }
 }
