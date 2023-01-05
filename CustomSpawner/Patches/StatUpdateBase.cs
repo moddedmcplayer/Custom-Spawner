@@ -8,31 +8,26 @@ using UnityEngine;
 
 namespace CustomSpawner.Patches
 {
+    using System;
+    using Mirror;
+    using Utils.Networking;
+
     [HarmonyPatch(typeof(SyncedStatBase), nameof(SyncedStatBase.Update))]
     internal static class StatBaseUpdate
     {
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        public static bool Prefix(SyncedStatBase __instance)
         {
-            List<CodeInstruction> newInstructions = ListPool<CodeInstruction>.Shared.Rent(instructions);
-
-            int index = newInstructions.FindIndex(instruction => instruction.opcode == OpCodes.Br);
-            Label continueLabel = (Label)newInstructions[index].operand;
-
-            const int offset = 1;
-            index = newInstructions.FindIndex(instruction => instruction.opcode == OpCodes.Stloc_1) + offset;
-
-            newInstructions.InsertRange(index, new[]
+            __instance.Update();
+            if (!NetworkServer.active || !__instance._valueDirty)
+                return false;
+            new SyncedStatMessages.StatMessage()
             {
-                new CodeInstruction(OpCodes.Ldloca_S, 1),
-                new CodeInstruction(OpCodes.Call, PropertyGetter(typeof(KeyValuePair<GameObject, ReferenceHub>), nameof(KeyValuePair<GameObject, ReferenceHub>.Key))),
-                new CodeInstruction(OpCodes.Call, Method(typeof(DummiesManager), nameof(DummiesManager.IsDummy), new[] { typeof(GameObject) })),
-                new CodeInstruction(OpCodes.Brtrue_S, continueLabel),
-            });
-
-            for (int z = 0; z < newInstructions.Count; z++)
-                yield return newInstructions[z];
-
-            ListPool<CodeInstruction>.Shared.Return(newInstructions);
+                Stat = __instance,
+                SyncedValue = __instance.CurValue
+            }.SendToHubsConditionally<SyncedStatMessages.StatMessage>((hub) => (__instance.CanReceive(hub) && !__instance.Hub.IsDummy()));
+            __instance._lastSent = __instance.CurValue;
+            __instance._valueDirty = false;
+            return false;
         }
     }
 }
