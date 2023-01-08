@@ -121,5 +121,7 @@ namespace CustomSpawner
 			y = 0,
 			z = 0
 		};
+
+		public bool EnableDummies { get; set; } = false;
 	}	
 }

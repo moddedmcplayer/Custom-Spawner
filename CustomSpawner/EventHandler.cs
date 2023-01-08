@@ -388,8 +388,10 @@ namespace CustomSpawner
 			});
 		}
 
+		private int i = 0;
 		public void OnWaitingForPlayers()
 		{
+			//Log.Info("1");
 			Round.IsLocked = true;
 
 			SCPsToSpawn = 0;
@@ -398,6 +400,7 @@ namespace CustomSpawner
 			GuardsToSpawn = 0;
 
 
+			//Log.Info("2");
 			Dictionary<RoleTypeId, string> dummiesToSpawn = new Dictionary<RoleTypeId, string>
 			{
 				{ RoleTypeId.Tutorial, Config.RandomTeamDummy },
@@ -410,14 +413,18 @@ namespace CustomSpawner
 
 			GameObject.Find("StartRound").transform.localScale = Vector3.zero;
 
+			//Log.Info("3");
 			if (lobbyTimer.IsRunning)
 			{
 				Timing.KillCoroutines(lobbyTimer);
 			}
 			lobbyTimer = Timing.RunCoroutine(LobbyTimer());
 
+			//Log.Info("4");
+			if(Config.EnableDummies)
 			foreach (var Role in dummiesToSpawn)
 			{
+				//Log.Info("	4.1");
 				GameObject obj = UnityEngine.Object.Instantiate(
 					NetworkManager.singleton.playerPrefab);
 				CharacterClassManager ccm = obj.GetComponent<CharacterClassManager>();
@@ -427,10 +434,11 @@ namespace CustomSpawner
 				ccm.GodMode = true;
 				//ccm.OldRefreshPlyModel(PlayerManager.localPlayer);
 				obj.GetComponent<NicknameSync>().Network_myNickSync = Role.Value;
-				ccm.Hub._playerId = new RecyclablePlayerId(9999);
-				ccm.Hub.Network_playerId = new RecyclablePlayerId(9999);
+				ccm.Hub._playerId = new RecyclablePlayerId(9999 + i);
+				ccm.Hub.Network_playerId = new RecyclablePlayerId(9999 + i);
 				obj.transform.localScale = new Vector3(2.3f, 2.3f, 2.3f);
 
+				//Log.Info("	4.2");
 				obj.transform.position = dummySpawnPointsAndRotations[Role.Key].Item1;
 				obj.transform.rotation = dummySpawnPointsAndRotations[Role.Key].Item2;
 
@@ -438,6 +446,7 @@ namespace CustomSpawner
 				Dummies.Add(obj);
 				DummiesManager.dummies.Add(obj, obj.GetComponent<ReferenceHub>());
 				
+				//Log.Info("	4.3");
 				var pickup = Item.Create(ItemType.SCP018).CreatePickup(dummySpawnPointsAndRotations[Role.Key].Item1);
 				GameObject gameObject = pickup.Base.gameObject;
 				gameObject.transform.localScale = new Vector3(30f, 0.1f, 30f);
@@ -463,12 +472,14 @@ namespace CustomSpawner
 						light.Color = Color.blue;
 						break;
 				}*/
+				//Log.Info("	4.4");
 				NetworkServer.UnSpawn(gameObject);
 				NetworkServer.Spawn(pickup.Base.gameObject);
 				Dummies.Add(pickup.Base.gameObject);
 
 				boll.Add(pickup);
 
+				//Log.Info("	4.5");
 				Rigidbody rigidBody = pickup.Base.gameObject.GetComponent<Rigidbody>();
 				Collider[] collider = pickup.Base.gameObject.GetComponents<Collider>();
 				foreach (Collider thing in collider)
@@ -481,6 +492,8 @@ namespace CustomSpawner
 					rigidBody.detectCollisions = false;
 				}
 				pickup.Base.transform.localPosition = dummySpawnPointsAndRotations[Role.Key].Item1 + Vector3.down * 3.3f;
+				//Log.Info("	4.6");
+				i++;
 			}
 		}
 
