@@ -34,7 +34,6 @@ namespace CustomSpawner
 			SpawnPoint = Config.SpawnPoint;
 			ClassDPoint = Config.ClassDPoint;
 			GuardPoint = Config.GuardPoint;
-			Tutorial = Config.Tutorial;
 			SCPPoint = Config.SCPPoint;
 			ScientistPoint = Config.ScientistPoint;
 			dummySpawnPointsAndRotations.Clear();
@@ -55,7 +54,6 @@ namespace CustomSpawner
 		// Spawn points for the different teams, making an arch shape
 		public static Vector3 ClassDPoint;
 		public static Vector3 GuardPoint;
-		public static Vector3 Tutorial;
 		public static Vector3 SCPPoint;
 		public static Vector3 ScientistPoint;
 
@@ -422,79 +420,79 @@ namespace CustomSpawner
 
 			//Log.Info("4");
 			if(Config.EnableDummies)
-			foreach (var Role in dummiesToSpawn)
-			{
-				//Log.Info("	4.1");
-				GameObject obj = UnityEngine.Object.Instantiate(
-					NetworkManager.singleton.playerPrefab);
-				CharacterClassManager ccm = obj.GetComponent<CharacterClassManager>();
-				if (ccm == null)
-					Log.Error("CCM is null, this can cause problems!");
-				ccm.Hub.roleManager.CurrentRole = ccm.Hub.roleManager.GetRoleBase(Role.Key);
-				ccm.GodMode = true;
-				//ccm.OldRefreshPlyModel(PlayerManager.localPlayer);
-				obj.GetComponent<NicknameSync>().Network_myNickSync = Role.Value;
-				ccm.Hub._playerId = new RecyclablePlayerId(9999 + i);
-				ccm.Hub.Network_playerId = new RecyclablePlayerId(9999 + i);
-				obj.transform.localScale = new Vector3(2.3f, 2.3f, 2.3f);
+				foreach (var role in dummiesToSpawn)
+				{
+					//Log.Info("	4.1");
+					GameObject obj = UnityEngine.Object.Instantiate(
+						NetworkManager.singleton.playerPrefab);
+					CharacterClassManager ccm = obj.GetComponent<CharacterClassManager>();
+					if (ccm == null)
+						Log.Error("CCM is null, this can cause problems!");
+					ccm.Hub.roleManager.CurrentRole = ccm.Hub.roleManager.GetRoleBase(role.Key);
+					ccm.GodMode = true;
+					//ccm.OldRefreshPlyModel(PlayerManager.localPlayer);
+					obj.GetComponent<NicknameSync>().Network_myNickSync = role.Value;
+					ccm.Hub._playerId = new RecyclablePlayerId(9999 + i);
+					ccm.Hub.Network_playerId = new RecyclablePlayerId(9999 + i);
+					obj.transform.localScale = new Vector3(2.3f, 2.3f, 2.3f);
 
-				//Log.Info("	4.2");
-				obj.transform.position = dummySpawnPointsAndRotations[Role.Key].Item1;
-				obj.transform.rotation = dummySpawnPointsAndRotations[Role.Key].Item2;
+					//Log.Info("	4.2");
+					obj.transform.position = dummySpawnPointsAndRotations[role.Key].Item1;
+					obj.transform.rotation = dummySpawnPointsAndRotations[role.Key].Item2;
 
-				NetworkServer.Spawn(obj);
-				Dummies.Add(obj);
-				DummiesManager.dummies.Add(obj, obj.GetComponent<ReferenceHub>());
+					NetworkServer.Spawn(obj);
+					Dummies.Add(obj);
+					DummiesManager.dummies.Add(obj, obj.GetComponent<ReferenceHub>());
 				
-				//Log.Info("	4.3");
-				var pickup = Item.Create(ItemType.SCP018).CreatePickup(dummySpawnPointsAndRotations[Role.Key].Item1);
-				GameObject gameObject = pickup.Base.gameObject;
-				gameObject.transform.localScale = new Vector3(30f, 0.1f, 30f);
+					//Log.Info("	4.3");
+					var pickup = Item.Create(ItemType.SCP018).CreatePickup(dummySpawnPointsAndRotations[role.Key].Item1);
+					GameObject gameObject = pickup.Base.gameObject;
+					gameObject.transform.localScale = new Vector3(30f, 0.1f, 30f);
 
-				/*var light = Light.Create(dummySpawnPointsAndRotations[Role.Key].Item1, dummySpawnPointsAndRotations[Role.Key].Item2.eulerAngles);
-				light.Intensity = 4f;
-				light.Range = 10f;
-				switch (Role.Key.GetTeam())
-				{
-					case Team.RSC:
-						light.Color = Color.white;
-						break;
-					case Team.MTF:
-						light.Color = Color.gray;
-						break;
-					case Team.SCP:
-						light.Color = Color.red;
-						break;
-					case Team.CDP:
-						light.Color = Color.yellow;
-						break;
-					default:
-						light.Color = Color.blue;
-						break;
-				}*/
-				//Log.Info("	4.4");
-				NetworkServer.UnSpawn(gameObject);
-				NetworkServer.Spawn(pickup.Base.gameObject);
-				Dummies.Add(pickup.Base.gameObject);
+					/*var light = Light.Create(dummySpawnPointsAndRotations[Role.Key].Item1, dummySpawnPointsAndRotations[Role.Key].Item2.eulerAngles);
+					light.Intensity = 4f;
+					light.Range = 10f;
+					switch (Role.Key.GetTeam())
+					{
+						case Team.RSC:
+							light.Color = Color.white;
+							break;
+						case Team.MTF:
+							light.Color = Color.gray;
+							break;
+						case Team.SCP:
+							light.Color = Color.red;
+							break;
+						case Team.CDP:
+							light.Color = Color.yellow;
+							break;
+						default:
+							light.Color = Color.blue;
+							break;
+					}*/
+					//Log.Info("	4.4");
+					NetworkServer.UnSpawn(gameObject);
+					NetworkServer.Spawn(pickup.Base.gameObject);
+					Dummies.Add(pickup.Base.gameObject);
 
-				boll.Add(pickup);
+					boll.Add(pickup);
 
-				//Log.Info("	4.5");
-				Rigidbody rigidBody = pickup.Base.gameObject.GetComponent<Rigidbody>();
-				Collider[] collider = pickup.Base.gameObject.GetComponents<Collider>();
-				foreach (Collider thing in collider)
-				{
-					thing.enabled = false;
+					//Log.Info("	4.5");
+					Rigidbody rigidBody = pickup.Base.gameObject.GetComponent<Rigidbody>();
+					Collider[] collider = pickup.Base.gameObject.GetComponents<Collider>();
+					foreach (Collider thing in collider)
+					{
+						thing.enabled = false;
+					}
+					if (rigidBody != null)
+					{
+						rigidBody.useGravity = false;
+						rigidBody.detectCollisions = false;
+					}
+					pickup.Base.transform.localPosition = dummySpawnPointsAndRotations[role.Key].Item1 + Vector3.down * 3.3f;
+					//Log.Info("	4.6");
+					i++;
 				}
-				if (rigidBody != null)
-				{
-					rigidBody.useGravity = false;
-					rigidBody.detectCollisions = false;
-				}
-				pickup.Base.transform.localPosition = dummySpawnPointsAndRotations[Role.Key].Item1 + Vector3.down * 3.3f;
-				//Log.Info("	4.6");
-				i++;
-			}
 		}
 
 		private IEnumerator<float> LobbyTimer()
