@@ -16,8 +16,8 @@ namespace CustomSpawner
 		public override string Name { get; } = "CustomSpawner";
 		public override string Author { get; } = "Kognity";
 		public override string Prefix { get; } = "CustomSpawner";
-		public override Version RequiredExiledVersion { get; } = new Version(5, 2, 0);
-		public override Version Version { get; } = new Version(2, 2, 0);
+		public override Version RequiredExiledVersion { get; } = new Version(7, 2, 0);
+		public override Version Version { get; } = new Version(2, 3, 0);
 
 		public override void OnEnabled()
 		{

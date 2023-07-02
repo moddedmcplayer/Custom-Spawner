@@ -16,6 +16,7 @@ using UnityEngine;
 using Light = Exiled.API.Features.Toys.Light;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
+// ReSharper disable InconsistentNaming
 
 namespace CustomSpawner
 {
@@ -103,7 +104,7 @@ namespace CustomSpawner
 			foreach (var thing in Dummies)
 			{
 				DummiesManager.dummies.Remove(thing);
-				UnityEngine.Object.Destroy(thing); // Deleting the dummies and SCP-018 circles
+				Object.Destroy(thing); // Deleting the dummies and SCP-018 circles
 			}
 			if (lobbyTimer.IsRunning)
 			{
